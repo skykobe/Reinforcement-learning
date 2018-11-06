@@ -16,7 +16,7 @@ class qlearing:
     def choose_action(self, state):
         self.check_exit(state)
         if(np.random.rand() < self.e_greedy):
-            find_res = self.q_table.loc(state, :)
+            find_res = self.q_table.loc[state, :]
             res_action = np.random.choice(find_res[find_res == np.max(find_res)].index)
         else:
             res_action = np.random.choice(self.action)
@@ -27,14 +27,14 @@ class qlearing:
             new_series = pd.Series([0]*len(self.action), index=self.action, name=state)
             self.q_table = self.q_table.append(new_series)
 
-    def learn(self, s, a, s_, r):
+    def learn(self, s, a, r, s_):
         # loss = real - predict, real = r + gama*max(next_state), predict = q_table
         # update method: new_q_table = old_q_table + lr*loss
         self.check_exit(s_)
-        if(s != '!terminal'):
-            q_real = r + self.gama * np.max(self.q_table.loc(s_, :))
+        if(s != 'terminal'):
+            q_real = r + self.gama * np.max(self.q_table.loc[s_, :])
         else:
             q_real = r
-        q_predict = self.q_table.loc(s, a)
+        q_predict = self.q_table.loc[s, a]
         loss = q_real - q_predict
-        self.q_table.loc(s, a) += self.lr*loss
+        self.q_table.loc[s, a] += self.lr*loss
